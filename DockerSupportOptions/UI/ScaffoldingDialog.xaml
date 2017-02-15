@@ -1,0 +1,65 @@
+﻿<ui:CloseableDialogWindow x:TypeArguments="local:ScaffoldingViewModel"
+        x:Class="Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding.ScaffoldingDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="clr-namespace:Microsoft.VisualStudio.Docker.Shared.UI"
+        xmlns:local="clr-namespace:Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding"
+        mc:Ignorable="d"
+        x:Uid="ScaffoldingOptions"
+        Height="Auto"
+        Width="400"
+        MinHeight="300"
+        MaxHeight="600"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Title="Scaffolding Options">
+    <!-- Resources -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DockerSupportOptions;component/UI/Styles/CommonStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!-- Layout -->
+    <Grid Style="{StaticResource StandardDialogGridStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label x:Uid="TargetOSNameLabel"
+               x:Name="TargetOSNameLabel"
+               Grid.Row="0"
+               Style="{StaticResource StandardTopLabelStyle}"
+               Target="{Binding ElementName=TargetOSRadioButtonList}"
+               Content="Target OS:" />
+        
+        <ListBox x:Name="TargetOSRadioButtonList"
+                 Grid.Row="1"
+                 Style="{StaticResource RadioButtonList}" SelectedValue="{Binding Path=SelectedTargetOS, Mode=TwoWay }">
+            <ListBoxItem>Linux Container</ListBoxItem>
+            <ListBoxItem>Nano Server Container</ListBoxItem>
+        </ListBox>
+
+        <StackPanel Grid.Row="2"
+                    Style="{StaticResource StandardButtonsPanelStyle}">
+            <Button x:Uid="SaveButton" 
+                    x:Name="SaveButton" 
+                    Style="{StaticResource StandardButtonStyle}"
+                    IsDefault="True"
+                    Command="{Binding SaveCommand}"
+                    Content="Save"/>
+            <Button x:Uid="CancelButton"
+                    x:Name="CancelButton"
+                    Style="{StaticResource StandardButtonStyle}"
+                    IsCancel="True"
+                    Content="Cancel" />
+        </StackPanel>
+    </Grid>
+</ui:CloseableDialogWindow>
