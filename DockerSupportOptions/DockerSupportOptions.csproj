@@ -59,10 +59,10 @@
     <Compile Include="UI\ICloseableDialogWindow.cs" />
     <Compile Include="UI\ObservableObject.cs" />
     <Compile Include="UI\RelayCommand.cs" />
-    <Compile Include="UI\ScaffoldingDialog.xaml.cs">
-      <DependentUpon>ScaffoldingDialog.xaml</DependentUpon>
+    <Compile Include="UI\DockerScaffoldingDialog.xaml.cs">
+      <DependentUpon>DockerScaffoldingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ScaffoldingViewModel.cs" />
+    <Compile Include="UI\DockerScaffoldingViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
@@ -185,7 +185,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\ScaffoldingDialog.xaml">
+    <Page Include="UI\DockerScaffoldingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

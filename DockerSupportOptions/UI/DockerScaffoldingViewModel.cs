@@ -11,23 +11,22 @@ namespace Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding
 {
     public enum TargetOS { Linux, NanoServer }
 
-    public class ScaffoldingViewModel : CloseableDialogViewModel, IDisposable
+    public class DockerScaffoldingViewModel : CloseableDialogViewModel
     {
         private TargetOS _selectedTargetOS;
 
-        public ScaffoldingViewModel()
+        public DockerScaffoldingViewModel()
         {
             SelectedTargetOS = TargetOS.NanoServer;
 
-            SaveCommand = new RelayCommand(OnOk);
+            SaveCommand = new RelayCommand(OnSave);
         }
-
-        /// <summary>
-        /// The button selected by the user.
-        /// </summary>
         public TargetOS SelectedTargetOS
         {
-            get { return _selectedTargetOS; }
+            get
+            {
+                return _selectedTargetOS;
+            }
 
             set
             {
@@ -38,14 +37,9 @@ namespace Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding
 
         public ICommand SaveCommand { get; }
 
-        public void OnOk(object paramter)
+        public void OnSave(object paramter)
         {
             this.DialogWindow.Close(true);
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

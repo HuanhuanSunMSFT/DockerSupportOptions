@@ -95,8 +95,8 @@ namespace DockerSupportOptions
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var viewModel = new ScaffoldingViewModel();
-            var dialog = new ScaffoldingDialog(viewModel);
+            var viewModel = new DockerScaffoldingViewModel();
+            var dialog = new DockerScaffoldingDialog(viewModel);
             if (dialog.ShowDialog() == true)
             {
                 MessageBox.Show("Window is closed: " + viewModel.SelectedTargetOS.ToString());
