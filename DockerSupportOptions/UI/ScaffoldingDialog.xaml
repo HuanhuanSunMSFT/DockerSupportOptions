@@ -42,9 +42,9 @@
         
         <ListBox x:Name="TargetOSRadioButtonList"
                  Grid.Row="1"
-                 Style="{StaticResource RadioButtonList}" SelectedValue="{Binding Path=SelectedTargetOS, Mode=TwoWay }">
-            <ListBoxItem>Linux Container</ListBoxItem>
-            <ListBoxItem>Nano Server Container</ListBoxItem>
+                 Style="{StaticResource RadioButtonList}" SelectedValuePath="Tag" SelectedValue="{Binding Path=SelectedTargetOS}">
+            <ListBoxItem Tag="Linux">Linux Container</ListBoxItem>
+            <ListBoxItem Tag="NanoServer">Nano Server Container</ListBoxItem>
         </ListBox>
 
         <StackPanel Grid.Row="2"
