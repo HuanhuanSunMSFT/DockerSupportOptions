@@ -51,11 +51,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="UI\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="UI\Converters\GenericBooleanConverter.cs" />
+    <Compile Include="UI\DockerComposeProject.cs" />
     <Compile Include="InvokeDockerSupportOptions.cs" />
     <Compile Include="InvokeDockerSupportOptionsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\CloseableDialogViewModel.cs" />
     <Compile Include="UI\CloseableDialogWindow.cs" />
+    <Compile Include="UI\DockerScaffoldingModel.cs" />
     <Compile Include="UI\ICloseableDialogWindow.cs" />
     <Compile Include="UI\ObservableObject.cs" />
     <Compile Include="UI\RelayCommand.cs" />

@@ -11,6 +11,10 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding;
 using System.Windows;
+using Microsoft.VisualStudio.Docker.Shared.UI;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
 
 namespace DockerSupportOptions
 {
@@ -95,12 +99,41 @@ namespace DockerSupportOptions
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var viewModel = new DockerScaffoldingViewModel();
+            var projects = GenerateDockerComposeProjects(ReadCountFromFile());
+            var model = new DockerScaffoldingModel(TargetOS.NanoServer, projects);
+            var viewModel = new DockerScaffoldingViewModel(model);
             var dialog = new DockerScaffoldingDialog(viewModel);
             if (dialog.ShowDialog() == true)
             {
-                MessageBox.Show("Window is closed: " + viewModel.SelectedTargetOS.ToString());
+                var selectedDockerComposeProjects = viewModel.AvailableDockerComposeProjects.Where(p => p.ApplyTo).ToArray();
+                string displayProjects = string.Empty;
+                foreach(var p in selectedDockerComposeProjects)
+                {
+                    displayProjects += p.ProjectName + Environment.NewLine;
+                }
+                MessageBox.Show("Window is closed: " + viewModel.SelectedTargetOS.ToString() + Environment.NewLine + displayProjects);
             }
+        }
+        
+        private string[] GenerateDockerComposeProjects(int count)
+        {
+            var projects = new List<string>();
+            for(int i=0; i<count; i++)
+            {
+                projects.Add($"dcproj{i}");
+            }
+            return projects.ToArray();
+        }
+
+        private int ReadCountFromFile()
+        {
+            var countString = File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "count.txt"));
+            int count;
+            if (!int.TryParse(countString, out count))
+            {
+                count = new Random().Next(0, 20);
+            }
+            return count;
         }
     }
 }

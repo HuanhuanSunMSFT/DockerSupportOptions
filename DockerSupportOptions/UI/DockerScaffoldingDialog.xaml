@@ -5,23 +5,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="clr-namespace:Microsoft.VisualStudio.Docker.Shared.UI"
+        xmlns:converters="clr-namespace:Microsoft.VisualStudio.Docker.Shared.UI.Converters"
         xmlns:local="clr-namespace:Microsoft.VisualStudio.Docker.Shared.UI.Scaffolding"
         mc:Ignorable="d"
-        x:Uid="ScaffoldingOptions"
+        x:Uid="DockerScaffoldingOptions"
         Height="Auto"
-        Width="400"
-        MinHeight="300"
-        MaxHeight="600"
+        Width="380"
+        MinHeight="150"
+        MaxHeight="480"
         SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
-        Title="Scaffolding Options">
-    <!-- Resources -->
+        Title="Docker Support Options">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/DockerSupportOptions;component/UI/Styles/CommonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        
         </ResourceDictionary>
     </Window.Resources>
 
@@ -30,6 +34,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -42,12 +47,43 @@
         
         <ListBox x:Name="TargetOSRadioButtonList"
                  Grid.Row="1"
-                 Style="{StaticResource RadioButtonList}" SelectedValuePath="Tag" SelectedValue="{Binding Path=SelectedTargetOS}">
+                 Style="{StaticResource RadioButtonList}"
+                 SelectedValuePath="Tag"
+                 SelectedValue="{Binding Path=SelectedTargetOS}">
             <ListBoxItem Tag="Linux">Linux Container</ListBoxItem>
             <ListBoxItem Tag="NanoServer">Nano Server Container</ListBoxItem>
         </ListBox>
 
-        <StackPanel Grid.Row="2"
+        <Grid Grid.Row="2"
+                    Visibility="{Binding ShowComposeProjectsList, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label x:Uid="AvailableComposeProjectsLabel"
+                   x:Name="AvailableComposeProjectsLabel"
+                   Grid.Row="0"
+                   Target="{Binding ElementName=AvailableComposeProjectsList}"
+                   Style="{StaticResource StandardLabelStyle}"
+                   Content="Target Docker Compose Projects:" />
+
+            <ListBox x:Name="AvailableComposeProjectsList"
+                     Grid.Row="1"
+                     Style="{StaticResource StandardListBoxStyle}"
+                     ItemsSource="{Binding AvailableDockerComposeProjects}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding ApplyTo, Mode=TwoWay}" />
+                            <Label Content="{Binding ProjectName}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </Grid>
+
+        <StackPanel Grid.Row="3"
                     Style="{StaticResource StandardButtonsPanelStyle}">
             <Button x:Uid="SaveButton" 
                     x:Name="SaveButton" 
