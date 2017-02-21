@@ -15,6 +15,8 @@ using Microsoft.VisualStudio.Docker.Shared.UI;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using Microsoft.VisualStudio.Shell.Settings;
+using Microsoft.VisualStudio.Settings;
 
 namespace DockerSupportOptions
 {
@@ -100,17 +102,24 @@ namespace DockerSupportOptions
         private void MenuItemCallback(object sender, EventArgs e)
         {
             var projects = GenerateDockerComposeProjects(ReadCountFromFile());
-            var model = new DockerScaffoldingModel(TargetOS.NanoServer, projects);
+
+            var setting = GetSettingsStore(TargetOS.NanoServer, projects);
+
+            var model = new DockerScaffoldingModel(setting.LastSelectedTargetOS.Value, setting.LastSelectedComposeProjects);
+
             var viewModel = new DockerScaffoldingViewModel(model);
             var dialog = new DockerScaffoldingDialog(viewModel);
             if (dialog.ShowDialog() == true)
             {
-                var selectedDockerComposeProjects = viewModel.AvailableDockerComposeProjects.Where(p => p.ApplyTo).ToArray();
+                var selectedDockerComposeProjects = viewModel.AvailableDockerComposeProjects.Where(p => p.ApplyTo).Select(p => p.ProjectName).ToArray();
                 string displayProjects = string.Empty;
                 foreach(var p in selectedDockerComposeProjects)
                 {
-                    displayProjects += p.ProjectName + Environment.NewLine;
+                    displayProjects += p + Environment.NewLine;
                 }
+
+                SaveSettings(viewModel.SelectedTargetOS, selectedDockerComposeProjects);
+                
                 MessageBox.Show("Window is closed: " + viewModel.SelectedTargetOS.ToString() + Environment.NewLine + displayProjects);
             }
         }
@@ -134,6 +143,61 @@ namespace DockerSupportOptions
                 count = new Random().Next(0, 20);
             }
             return count;
+        }
+
+        private const string DockerToolsCollectionPath = "DockerTools";
+        private const string DockerToolsTargetOSProperty = "TargetOS";
+        private const string DockerToolsAvailableComposeProjectsProperty = "ComposeProjects";
+        private const string DockerToolsSelectedComposeProjectsProperty = "SelectedComposeProjects";
+
+        private Settings GetSettingsStore(TargetOS? defaultTargetOS, string[] selectedProjects)
+        {
+            var settingsManager = new ShellSettingsManager(ServiceProvider);
+            var settingsStore = settingsManager.GetReadOnlySettingsStore(SettingsScope.UserSettings);
+            if (settingsStore.CollectionExists(DockerToolsCollectionPath))
+            {
+                var targetOSString = settingsStore.GetString(DockerToolsCollectionPath, DockerToolsTargetOSProperty);
+                var availableProjectsString = settingsStore.GetString(DockerToolsCollectionPath, DockerToolsAvailableComposeProjectsProperty);
+
+                if (!string.IsNullOrEmpty(targetOSString))
+                {
+                    defaultTargetOS = Enum.Parse(typeof(TargetOS), targetOSString) as TargetOS?;
+                }
+
+                if (!string.IsNullOrEmpty(availableProjectsString))
+                {
+                    selectedProjects = availableProjectsString.Split('&');
+                }
+            }
+            
+
+            return new Settings(defaultTargetOS, selectedProjects);
+        }
+
+        private void SaveSettings(TargetOS targetOS, string[] selectedProjects)
+        {
+            var settingsManager = new ShellSettingsManager(ServiceProvider);
+            var settingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            if (!settingsStore.CollectionExists(DockerToolsCollectionPath))
+            {
+                settingsStore.CreateCollection(DockerToolsCollectionPath);
+            }
+
+            settingsStore.SetString(DockerToolsCollectionPath, DockerToolsTargetOSProperty, targetOS.ToString());
+            settingsStore.SetString(DockerToolsCollectionPath, DockerToolsAvailableComposeProjectsProperty, string.Join("&", selectedProjects));
+        }
+
+        private class Settings
+        {
+            public Settings(TargetOS? targetOS, string[] selectedProjects)
+            {
+                LastSelectedTargetOS = targetOS;
+                LastSelectedComposeProjects = selectedProjects;
+            }
+
+            public TargetOS? LastSelectedTargetOS { get; set; }
+
+            public string[] LastSelectedComposeProjects { get; set; }
         }
     }
 }
